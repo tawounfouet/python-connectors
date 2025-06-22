@@ -1,0 +1,17 @@
+# Dépendances de base
+pydantic>=2.0.0
+
+# Connecteurs de base de données (optionnels)
+# Décommentez selon vos besoins
+
+# PostgreSQL
+# psycopg2-binary>=2.9.0
+
+# MySQL
+# mysql-connector-python>=8.0.0
+
+# SQL Server
+# pyodbc>=4.0.0
+
+# Snowflake
+# snowflake-connector-python>=3.0.0
