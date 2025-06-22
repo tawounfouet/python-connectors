@@ -11,3 +11,9 @@ psycopg2-binary>=2.9.0  # PostgreSQL
 boto3>=1.26.0          # AWS S3
 
 python-dotenv
+tabulate
+
+# Connecteurs de messagerie (optionnels)
+oauth2client 
+google-auth 
+google-auth-oauthlib

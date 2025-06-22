@@ -1,7 +1,10 @@
 """
 Connecteurs de messagerie.
+
+Ce module fournit des connecteurs pour différents systèmes de messagerie,
+permettant l'envoi et la réception de messages.
 """
 
-# TODO: Implémenter les connecteurs SMTP, Slack, Teams, etc.
+from .smtp import SMTPConnector, GmailConnector
 
-__all__ = []
+__all__ = ["SMTPConnector", "GmailConnector"]
