@@ -53,6 +53,9 @@ export YOUTUBE_ACCESS_TOKEN="your_access_token"
 # TikTok
 export TIKTOK_ACCESS_TOKEN="your_access_token"
 export TIKTOK_CLIENT_KEY="your_client_key"
+
+# GitHub
+export GITHUB_ACCESS_TOKEN="your_personal_access_token"
 ```
 
 ### Configuration par code
@@ -75,6 +78,22 @@ linkedin_config = LinkedInConfig(
     access_token="your_access_token",
     client_id="your_client_id",
     default_visibility="PUBLIC"
+)
+
+# Configuration GitHub
+github_config = {
+    'access_token': 'your_personal_access_token',
+    'default_owner': 'your_username',
+    'default_repo': 'your_repository'
+}
+
+# Configuration avec classe (recommandée)
+from connectors.config.social_media import GitHubConfig
+
+github_config = GitHubConfig(
+    access_token="your_personal_access_token",
+    default_owner="your_username",
+    default_repo="your_repository"
 )
 ```
 
@@ -234,6 +253,66 @@ with tiktok.connection():
     print(f"Analytics: {analytics['view_count']} vues, {analytics['like_count']} likes")
 ```
 
+### GitHub
+
+```python
+from connectors import create_connector
+
+# Configuration
+config = {
+    'access_token': 'your_personal_access_token',  # Token d'accès GitHub
+    'default_owner': 'your_username',              # Optionnel: propriétaire par défaut
+    'default_repo': 'your_repository'              # Optionnel: dépôt par défaut
+}
+
+# Création du connecteur
+github = create_connector("github", config)
+
+with github.connection():
+    # Création d'une issue
+    issue = github.post_message(
+        "Bug dans la fonction d'authentification",
+        options={
+            'owner': 'username',            # Remplace default_owner si spécifié
+            'repo': 'repository',           # Remplace default_repo si spécifié
+            'title': "Bug d'authentification", 
+            'labels': ['bug', 'priority']   # Optionnel
+        }
+    )
+    print(f"Issue créée: {issue['url']}")
+    
+    # Commentaire sur une issue existante
+    comment = github.post_message(
+        "J'ai trouvé la solution au problème!",
+        options={
+            'issue_number': 42              # Numéro de l'issue à commenter
+        }
+    )
+    
+    # Récupération des issues et pull requests
+    activity = github.get_feed(
+        limit=15,
+        type='all',                         # 'all', 'issues' ou 'pulls'
+        state='open'                        # 'open', 'closed' ou 'all'
+    )
+    
+    for item in activity:
+        if item['type'] == 'issue':
+            print(f"Issue #{item['number']}: {item['title']}")
+        else:
+            print(f"PR #{item['number']}: {item['title']} ({item['branch']})")
+    
+    # Informations du profil
+    profile = github.get_profile_info()
+    print(f"Profil: {profile['login']} ({profile['public_repos']} repos publics)")
+    
+    # Fermeture d'une issue (GitHub ne permet pas la suppression via API)
+    github.delete_post('issue:username:repository:42')
+    
+    # Suppression d'un commentaire
+    github.delete_post('comment:username:repository:123')
+```
+
 ## 🎯 Bonnes pratiques
 
 ### 1. Gestion des tokens
@@ -308,7 +387,8 @@ def validate_content(content: str, platform: str) -> bool:
         'twitter': 280,
         'linkedin': 3000,
         'facebook': 63206,
-        'instagram': 2200
+        'instagram': 2200,
+        'github': 65536     # Limite pour un commentaire/issue
     }
     
     max_length = limits.get(platform, 1000)
@@ -407,6 +487,7 @@ def retry_with_backoff(max_retries=3, base_delay=1.0):
 | Instagram | 25 | 2,200 | 200 req/heure | Business account |
 | YouTube | Illimité | N/A | 10,000 unités/jour | Upload limité |
 | TikTok | 20 | N/A | Varie | Beta API |
+| GitHub | Illimité | 65,536 | 5000 req/heure | Authentifié |
 
 ### Permissions requises
 
@@ -427,6 +508,10 @@ def retry_with_backoff(max_retries=3, base_delay=1.0):
 
 #### TikTok
 - Permissions: `user.info.basic`, `video.list`, `video.upload`
+
+#### GitHub
+- Scopes: `repo`, `user`
+- Permissions: `issues:write`, `contents:read`
 
 ## 📊 Monitoring et métriques
 

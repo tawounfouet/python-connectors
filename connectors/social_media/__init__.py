@@ -13,13 +13,15 @@ from .instagram import InstagramConnector
 from .linkedin import LinkedInConnector
 from .youtube import YouTubeConnector
 from .tiktok import TikTokConnector
+from .github import GitHubConnector
 
 __all__ = [
-    'SocialMediaConnector',
-    'TwitterConnector',
-    'FacebookConnector',
-    'InstagramConnector',
-    'LinkedInConnector',
-    'YouTubeConnector',
-    'TikTokConnector'
+    "SocialMediaConnector",
+    "TwitterConnector",
+    "FacebookConnector",
+    "InstagramConnector",
+    "LinkedInConnector",
+    "YouTubeConnector",
+    "TikTokConnector",
+    "GitHubConnector",
 ]
